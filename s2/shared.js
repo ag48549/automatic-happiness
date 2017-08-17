@@ -1,8 +1,8 @@
 const shared = {
-  var eneeders = [];
-  var ewanters = [];
-  var eneeded = [];
-  var ewanted = [];
+  eneeders: [],
+  ewanters: [],
+  eneeded: [],
+  ewanted: [],
 
   needEnergy: function(room) {
     if(!eneeded[room.name]) {
@@ -13,7 +13,7 @@ const shared = {
           s.structureType == STRUCTURE_TOWER)});
     }
     return eneeders[room.name];
-  };
+  },
 
   wantEnergy: function(room) {
     if(!ewanted[room.name]) {
@@ -24,7 +24,7 @@ const shared = {
           s.energy == 0 && (s.memory.role == 'upgrader' || s.memory.role == 'builder')}));
     }
     return ewanters[room.name];
-  };
+  }
 }
 
 module.exports = shared;

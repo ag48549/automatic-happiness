@@ -1,8 +1,8 @@
 const shared = require('shared');
 
 const roleDrone = {
-  parts: [CARRY, MOVE, CARRY, MOVE];
-  cost:  [200, 200, 100];
+  parts: [CARRY, MOVE, CARRY, MOVE],
+  cost:  [200, 200, 100],
 
   spawn: function(spawner) {
     const countDrones = require('config');
@@ -14,7 +14,7 @@ const roleDrone = {
 	 if(cost[x] <= room.energyAvailable)
            return spawner.createCreep(parts.slice(x,4),n,{role:'drone',job:'idle',source:null,dest:null});
     }
-  }
+  },
 
   run: function(creep) {
     switch(creep.memory.job) {
@@ -86,7 +86,7 @@ const roleDrone = {
         if(creep.carry.energy == 0) creep.memory.job = 'gather';
         break;
     }
-  }
+  },
         
   findTarget: function(creep) {
     let needs = shared.needEnergy(creep.room);

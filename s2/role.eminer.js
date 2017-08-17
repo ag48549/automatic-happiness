@@ -1,6 +1,6 @@
 const roleEMiner = {
-  parts: [WORK, WORK, WORK, WORK, WORK, MOVE];
-  cost:  [550, 450, 350, 250];
+  parts: [WORK, WORK, WORK, WORK, WORK, MOVE],
+  cost:  [550, 450, 350, 250],
 
   spawn: function(spawner) {
     const r = spawner.room
@@ -13,7 +13,7 @@ const roleEMiner = {
             return spawner.createCreep(parts.slice(x,6),n,{role:'eminer',target:i.id});
      }
      return ERR_NOT_ENOUGH_ENERGY;
-  }
+  },
        
   run: function(creep) {
     const s = Game.getObjectByID(creep.memory.target);
