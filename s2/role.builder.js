@@ -3,7 +3,7 @@ const roleBuilder = {
       for(let i = 1; i < 100; i++)
 	if(!Game.creeps['builder${i}'])
 	  queue.push([room,'builder${i}',[WORK,CARRY,MOVE],{role:'builder', active: false}]);
-    };
+    }
 
     run: function(creep) {
         if(creep.memory.active) {
@@ -21,7 +21,7 @@ const roleBuilder = {
                 if(creep.harvest(e) == ERR_NOT_IN_RANGE) creep.moveTo(e);
             }
         }
-    };
-};
+    }
+}
 
 module.exports = roleBuilder;

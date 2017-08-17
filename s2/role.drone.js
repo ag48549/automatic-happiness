@@ -14,7 +14,7 @@ const roleDrone = {
 	 if(cost[x] <= room.energyAvailable)
            return spawner.createCreep(parts.slice(x,4),n,{role:'drone',job:'idle',source:null,dest:null});
     }
-  };
+  }
 
   run: function(creep) {
     switch(creep.memory.job) {
@@ -72,7 +72,8 @@ const roleDrone = {
         break;
         }
         if(creep.transfer(d, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-          const near = creep.pos.findInRange(FIND_MY_CREEPS, {filter: x => x.memory.role == 'drone' && x.memory.job == 'gather'})[0];
+          const near = creep.pos.findInRange(FIND_MY_CREEPS, {filter: x =>
+              x.memory.role == 'drone' && x.memory.job == 'gather'})[0];
           if(near) {
             near.memory.job = 'deliver';
             creep.memory.job = 'traded';
@@ -85,7 +86,7 @@ const roleDrone = {
         if(creep.carry.energy == 0) creep.memory.job = 'gather';
         break;
     }
-  };
+  }
         
   findTarget: function(creep) {
     let needs = shared.needEnergy(creep.room);
@@ -94,4 +95,7 @@ const roleDrone = {
     if(needs) 
       return creep.pos.findClosestByRange(needs);
     return null;
-  };
+  }
+}
+
+module.exports = roleDrone;

@@ -13,13 +13,13 @@ const roleEMiner = {
             return spawner.createCreep(parts.slice(x,6),n,{role:'eminer',target:i.id});
      }
      return ERR_NOT_ENOUGH_ENERGY;
-  };
+  }
        
   run: function(creep) {
     const s = Game.getObjectByID(creep.memory.target);
     if(!s) creep.suicide();
     if(creep.harvest(s) == ERR_NOT_IN_RANGE) creep.moveTo(s);
-  };
+  }
 }
 
 
