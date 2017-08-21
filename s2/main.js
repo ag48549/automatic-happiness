@@ -1,41 +1,77 @@
-var roleUpgrader = require('role.upgrader');
-var roleBuilder = require('role.builder');
-var roleSpawnMiner = require('role.spawnminer');
-var roleRepairer = require('role.repairer');
-const roleEMiner = require('role.eminer');
-const roleDrone = require('role.drone');
-
-const totalbuilders = 1;
-const totalrepairers = 4;
-const totalupgraders = 8;
-//const totalspawnminers = 0;
+const roleUpgrader = require('role.upgrader');
+const roleBuilder = require('role.builder');
+const roleRepairer = require('role.repairer');
+const cTower = require('c.tower');
+const profiler = require('screeps-profiler');
 
 
+//module.exports.loop = function () {
+/* */
+profiler.enable();
 module.exports.loop = function () {
-    var c_builder = 0;
-    var c_upgrader = 0;
-    var c_repairer = 0;
-//    var c_spawnminer = 0;
-    for(let c in Memory.creeps) {
-        if(!Game.creeps[c]) {
-            delete Memory.creeps[c];
-            continue;
-        }
-        let r = Game.creeps[c];
-        switch(r.memory.role) {
-            case 'upgrader': roleUpgrader.run(r); c_upgrader += 1; break;
-            case 'builder': roleBuilder.run(r); c_builder += 1; break;
-            case 'repairer': roleRepairer.run(r); c_repairer += 1; break;
-            case 'drone': roleDrone.run(r); break;
-            case 'eminer':roleEMiner.run(r); break;
-            default: roleSpawnMiner.run(r); c_spawnminer += 1;
-        }
-//        if(r.memory.role == 'upgrader') roleUpgrader.run(r);
+  profiler.wrap(function () {
+/* */
+
+    let hungry = [];
+    let roads = [];
+    let h = 0;
+
+    var c_mites = 0;
+    var c_builders = 0;
+    var c_repairers = 0;
+    var c_upgraders = 0;
+
+    for(let id in Game.structures) {
+        let s = Game.structures[id];
+        if(s.structureType == STRUCTURE_TOWER) {
+          let target = s.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+          if(target) s.attack(target);
+          else if(s.energy > 400) {
+            if(!roads[s.room.name]) 
+              roads[s.room.name] = s.room.find(FIND_STRUCTURES, {filter: {structureType: STRUCTURE_ROAD}}).sort(function(a,b) {return a.hits - b.hits;});
+            tower.repair(roads[s.room.name][0]);
+          }
+        }    
+        if(s.hasOwnProperty('energy') && s.energy < s.energyCapacity)
+          hungry[h++] = s;
     }
-    roleEMiner.spawn(Game.spawns[Spawn1]);
-    roleDrone.spawn(Game.spawns[Spawn1]);
-    if(c_builder < totalbuilders) Game.spawns['Spawn1'].createCreep([WORK,CARRY,WORK,MOVE], undefined, {role:'builder'});
-    if(c_repairer < totalrepairers) Game.spawns['Spawn1'].createCreep([WORK,CARRY,MOVE,MOVE], undefined, {role:'repairer'});
-    if(c_upgrader < totalupgraders) Game.spawns['Spawn1'].createCreep([WORK,CARRY,WORK,MOVE], undefined, {role:'upgrader'});
-    if(c_spawnminer < totalspawnminers) Game.spawns['Spawn1'].createCreep([WORK,WORK,CARRY,MOVE]);
+    if((Game.time() % 200) == 0)
+      for(let name in Memory.creeps)
+        if(!Game.creeps[name]) delete Memory.creeps[name];
+
+    for(let name in Game.creeps) {
+      let c = Game.creeps[name];
+      if(c.memory.role == 'mite') {
+        rMite.run(c,hungry);
+        c_mites++;
+        continue;
+      }
+      if(c.memory.role == 'upgrader' {
+        roleUpgrader.run(c);
+        c_upgraders++;
+        continue;
+      }
+      if(c.memory.role == 'repairer') {
+        roleRepairer.run(c);
+        c_repairers++;
+        continue;
+      }
+      if(c.memory.role == 'builder') {
+        roleBuilder.run(c);
+        c_builders++;
+        continue;
+      }
+    }
+    
+    let i = 0;
+    for(let name in Game.spawns) {
+      let s = Game.spawns['name'];
+      if(c_builders < 1) s.createCreep([MOVE,MOVE,WORK,CARRY], undefined, {role:'builder'});
+      if(c_repairers < 2) s.createCreep([MOVE,MOVE,WORK,CARRY], undefined, {role:'repairer'});
+      if(c_upgraders < 4) s.createCreep([MOVE, WORK, CARRY]), undefined, {role:'upgrader'});
+      if(c_mites < 8) s.createCreep([MOVE,CARRY]), undefined, {role:'mite'});
+    }
+}
+/* */
+);
 }
